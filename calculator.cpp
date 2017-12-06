@@ -5,6 +5,8 @@
 #include "button.h"
 #include "calculator.h"
 
+Button *button;
+
 Calculator::Calculator(QWidget *parent)
     :QWidget(parent)
 {
@@ -53,7 +55,7 @@ Calculator::Calculator(QWidget *parent)
     timesButton->setShortcut(Qt::Key_Asterisk);
     minusButton->setShortcut(Qt::Key_Minus);
     plusButton->setShortcut(Qt::Key_Plus);
-    //equalButton->keyPressEvent();
+    button = equalButton;
 
     QGridLayout *mainLayout = new QGridLayout;
 
@@ -222,6 +224,7 @@ void Calculator::equalClicked()
      display->setText(QString::number(sumSoFar));
      sumSoFar = 0.0;
      waitingForOperand = true;
+     button->setDown(false);
 }
 
 
@@ -325,8 +328,12 @@ Qt::Key Calculator::Key(int i)
 void Calculator::keyPressEvent(QKeyEvent *event)
 {
     if(event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter || event->key() == Qt::Key_Equal)
-        equalClicked();
-    QWidget::keyPressEvent(event);
+    {equalClicked();button->setDown(true);}
 }
 
+void Calculator::keyReleaseEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter || event->key() == Qt::Key_Equal)
+        button->setDown(false);
+}
 
